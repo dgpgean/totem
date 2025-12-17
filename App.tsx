@@ -75,7 +75,7 @@ export default function App() {
     setIsProcessing(true);
     try {
       const result = await createCompositeImage(capturedPhotos, currentLayout, eventConfig, drawingUrl);
-      await savePhotoToGallery(eventConfig.eventName, result);
+      await savePhotoToGallery(eventConfig.eventName || 'Evento', result);
       setFinalImage(result);
       setAppState(AppState.RESULT);
     } catch (e) {
@@ -89,7 +89,7 @@ export default function App() {
 
   const getDownloadFilename = () => {
       const date = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-      const cleanName = eventConfig.eventName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const cleanName = (eventConfig.eventName || 'totem').replace(/[^a-z0-9]/gi, '_').toLowerCase();
       return `totem_${cleanName}_${date}.jpg`;
   };
 
@@ -136,7 +136,7 @@ export default function App() {
           <div className="z-10 text-center space-y-10 animate-in slide-in-from-bottom-10 fade-in duration-700 px-6 max-w-5xl w-full">
             <div className="space-y-4">
                 <h1 className="text-6xl md:text-8xl font-black text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] tracking-tight leading-none">
-                  {eventConfig.eventName}
+                  {eventConfig.eventName || 'Seja Bem-vindo!'}
                 </h1>
                 <div className="flex items-center justify-center gap-4">
                    <div className="h-[1px] w-12 bg-white/50"></div>

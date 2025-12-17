@@ -43,7 +43,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
   };
 
   const handleDeleteGallery = async () => {
-    if (confirm(`Tem certeza que deseja apagar todas as fotos do evento "${localConfig.eventName}"?`)) {
+    if (confirm(`Tem certeza que deseja apagar todas as fotos do evento "${localConfig.eventName || 'sem nome'}"?`)) {
       await deleteEventGallery(localConfig.eventName);
       loadGallery();
     }
@@ -78,7 +78,6 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
   return (
     <div className="h-screen bg-slate-950 text-white flex flex-col font-sans">
       
-      {/* Header Fixo */}
       <header className="bg-slate-900 border-b border-slate-800 p-6 flex flex-col md:flex-row items-center justify-between gap-6 shrink-0">
           <div className="flex items-center gap-6">
               <div className="p-4 bg-indigo-600 rounded-2xl shadow-lg">
@@ -116,14 +115,12 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
           </button>
       </header>
 
-      {/* Conteúdo Scrolável */}
       <div className="flex-1 overflow-y-auto p-6 md:p-12">
         <div className="max-w-6xl mx-auto pb-20">
           
           {activeTab === 'config' ? (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in duration-500">
                 <div className="lg:col-span-7 space-y-8">
-                {/* 1. Layout */}
                 <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl">
                     <h2 className="text-xl font-bold mb-6 text-indigo-400 flex items-center gap-2">
                         <span className="w-2 h-8 bg-indigo-500 rounded-full"></span>
@@ -143,7 +140,6 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                     </div>
                 </section>
 
-                {/* 2. Detalhes */}
                 <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl">
                     <h2 className="text-xl font-bold mb-6 text-indigo-400 flex items-center gap-2">
                         <span className="w-2 h-8 bg-indigo-500 rounded-full"></span>
@@ -152,22 +148,39 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                     <div className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-slate-400 mb-2">Nome do Evento (Título Principal)</label>
-                            <input type="text" value={localConfig.eventName} onChange={e => setLocalConfig({...localConfig, eventName: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                            <input 
+                              type="text" 
+                              placeholder="Digite o nome do evento"
+                              value={localConfig.eventName} 
+                              onChange={e => setLocalConfig({...localConfig, eventName: e.target.value})} 
+                              className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" 
+                            />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-400 mb-2">Localização</label>
-                                <input type="text" value={localConfig.eventLocation || ''} onChange={e => setLocalConfig({...localConfig, eventLocation: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                                <input 
+                                  type="text" 
+                                  placeholder="Digite o local do evento"
+                                  value={localConfig.eventLocation || ''} 
+                                  onChange={e => setLocalConfig({...localConfig, eventLocation: e.target.value})} 
+                                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" 
+                                />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-slate-400 mb-2">Data do Evento</label>
-                                <input type="text" value={localConfig.eventDate} onChange={e => setLocalConfig({...localConfig, eventDate: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+                                <input 
+                                  type="text" 
+                                  placeholder="Digite a data do evento"
+                                  value={localConfig.eventDate} 
+                                  onChange={e => setLocalConfig({...localConfig, eventDate: e.target.value})} 
+                                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" 
+                                />
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* 3. Instagram Settings */}
                 {isInstagram && (
                     <section className="bg-gradient-to-br from-pink-900/30 to-purple-900/30 rounded-3xl p-8 border border-pink-500/30 shadow-xl">
                         <h2 className="text-xl font-bold mb-6 text-pink-400 flex items-center gap-2">
@@ -176,7 +189,13 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                         <div className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium text-white/80 mb-2">Frase do Topo</label>
-                                <input type="text" value={localConfig.instagramHeader || ''} onChange={e => setLocalConfig({...localConfig, instagramHeader: e.target.value})} className="w-full bg-black/30 border border-white/10 rounded-xl p-4 text-lg text-white" />
+                                <input 
+                                  type="text" 
+                                  placeholder="Ex: Momentos Especiais 💍"
+                                  value={localConfig.instagramHeader || ''} 
+                                  onChange={e => setLocalConfig({...localConfig, instagramHeader: e.target.value})} 
+                                  className="w-full bg-black/30 border border-white/10 rounded-xl p-4 text-lg text-white" 
+                                />
                             </div>
                             <div className="flex items-center gap-4 bg-black/20 p-4 rounded-xl border border-white/5">
                                 <div className="relative w-24 h-24 rounded-full overflow-hidden bg-slate-800 border-2 border-slate-600 flex-shrink-0 group">
@@ -200,11 +219,10 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                     </section>
                 )}
 
-                {/* 4. Hardware */}
                 <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl">
                     <h2 className="text-xl font-bold mb-6 text-indigo-400">4. Dispositivo de Captura</h2>
                     <select value={localConfig.deviceId} onChange={e => setLocalConfig({...localConfig, deviceId: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg">
-                        <option value="">Câmera Padrão (ou DSLR via Virtual Cam)</option>
+                        <option value="">Selecione uma Câmera</option>
                         {devices.map(device => <option key={device.deviceId} value={device.deviceId}>{device.label || `Câmera ${device.deviceId.slice(0,4)}`}</option>)}
                     </select>
                 </section>
@@ -226,7 +244,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                             ) : (
                                 <div className="text-center text-slate-600">
                                     <ImageIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                                    <p>Clique ou arraste o fundo</p>
+                                    <p>Clique para subir imagem de fundo</p>
                                 </div>
                             )}
                             <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'backgroundUrl')} className="absolute inset-0 opacity-0 cursor-pointer" />
@@ -236,11 +254,10 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                 </div>
             </div>
           ) : (
-            /* ABA DE GALERIA */
             <div className="animate-in fade-in duration-500">
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h2 className="text-4xl font-black text-white">Galeria: {localConfig.eventName}</h2>
+                        <h2 className="text-4xl font-black text-white">Galeria: {localConfig.eventName || 'Evento sem Nome'}</h2>
                         <p className="text-slate-400 mt-2">{eventPhotos.length} fotos salvas neste totem.</p>
                     </div>
                     <button 
@@ -265,7 +282,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-4">
                                     <a 
                                         href={photo.dataUrl} 
-                                        download={`totem_${localConfig.eventName.replace(/ /g,'_')}_${i+1}.jpg`}
+                                        download={`totem_${(localConfig.eventName || 'evento').replace(/ /g,'_')}_${i+1}.jpg`}
                                         className="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-full shadow-xl"
                                     >
                                         <Download className="w-6 h-6" />

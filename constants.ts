@@ -1,5 +1,5 @@
+
 import { LayoutConfig } from './types';
-import { LayoutTemplate, Grid2x2, Ticket } from 'lucide-react';
 
 export const LAYOUTS: Record<string, LayoutConfig> = {
   STRIP: {
@@ -13,7 +13,7 @@ export const LAYOUTS: Record<string, LayoutConfig> = {
     id: 'instagram',
     name: 'Post Instagram',
     description: '1 Foto Principal + Perfil e Feed fixos',
-    photoCount: 1, // Changed to 1 based on request
+    photoCount: 1,
     aspectRatio: 9 / 16, // Phone screen
   },
   GRID: {
@@ -40,14 +40,14 @@ export const LAYOUTS: Record<string, LayoutConfig> = {
 };
 
 export const DEFAULT_CONFIG = {
-  eventName: 'Gabriela & Diego',
-  eventDate: new Date().toISOString().split('T')[0],
-  eventLocation: 'Sítio do Tino',
+  eventName: '',
+  eventDate: '',
+  eventLocation: '',
   backgroundUrl: null,
   instagramProfileImage: null,
   instagramFooterImages: [],
-  instagramHeader: 'Enfim 💍 Casados',
+  instagramHeader: '',
   layoutId: 'instagram', 
   deviceId: '',
-  primaryColor: '#ec4899' // Pink-500
+  primaryColor: '#6366f1'
 };
