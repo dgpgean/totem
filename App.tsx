@@ -1,30 +1,43 @@
 
 import React, { useState, useEffect } from 'react';
-import { Settings, Play, Download, RefreshCw, X } from 'lucide-react';
+import { Settings, Play, Download, RefreshCw, X, Loader2 } from 'lucide-react';
 import { EventConfig, AppState, PhotoData } from './types';
 import { DEFAULT_CONFIG, LAYOUTS } from './constants';
 import { SetupScreen } from './components/SetupScreen';
 import { CameraView } from './components/CameraView';
 import { DrawingPad } from './components/DrawingPad';
 import { createCompositeImage } from './services/canvasService';
-import { savePhotoToGallery } from './services/galleryService';
+import { savePhotoToGallery, saveConfig, loadConfig } from './services/galleryService';
 
 export default function App() {
   const [appState, setAppState] = useState<AppState>(AppState.SETUP);
-  const [eventConfig, setEventConfig] = useState<EventConfig>(() => {
-    const saved = localStorage.getItem('totem_config');
-    return saved ? JSON.parse(saved) : DEFAULT_CONFIG;
-  });
+  const [eventConfig, setEventConfig] = useState<EventConfig>(DEFAULT_CONFIG);
+  const [isLoadingConfig, setIsLoadingConfig] = useState(true);
   const [photos, setPhotos] = useState<PhotoData[]>([]);
   const [finalImage, setFinalImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [drawingData, setDrawingData] = useState<string | null>(null);
 
+  // Carregar configuração inicial do IndexedDB (suporta imagens grandes)
   useEffect(() => {
-    localStorage.setItem('totem_config', JSON.stringify(eventConfig));
-  }, [eventConfig]);
+    async function init() {
+      const saved = await loadConfig();
+      if (saved) {
+        setEventConfig(saved);
+        setAppState(AppState.START);
+      }
+      setIsLoadingConfig(false);
+    }
+    init();
+  }, []);
 
   const currentLayout = LAYOUTS[eventConfig.layoutId.toUpperCase()] || LAYOUTS.STRIP;
+
+  const handleSaveConfig = async (newConfig: EventConfig) => {
+    setEventConfig(newConfig);
+    await saveConfig(newConfig);
+    setAppState(AppState.START);
+  };
 
   const handleStartSession = () => {
     setPhotos([]);
@@ -62,15 +75,12 @@ export default function App() {
     setIsProcessing(true);
     try {
       const result = await createCompositeImage(capturedPhotos, currentLayout, eventConfig, drawingUrl);
-      
-      // SALVAR NA GALERIA DO EVENTO (OFFLINE INDEXEDDB)
       await savePhotoToGallery(eventConfig.eventName, result);
-      
       setFinalImage(result);
       setAppState(AppState.RESULT);
     } catch (e) {
       console.error(e);
-      alert('Erro ao criar imagem');
+      alert('Erro ao criar imagem final.');
       setAppState(AppState.START);
     } finally {
       setIsProcessing(false);
@@ -83,14 +93,20 @@ export default function App() {
       return `totem_${cleanName}_${date}.jpg`;
   };
 
+  if (isLoadingConfig) {
+    return (
+      <div className="h-screen bg-black flex flex-col items-center justify-center text-white">
+        <Loader2 className="w-12 h-12 animate-spin text-indigo-500 mb-4" />
+        <p className="text-xl font-medium">Carregando Totem...</p>
+      </div>
+    );
+  }
+
   if (appState === AppState.SETUP) {
     return (
       <SetupScreen 
         config={eventConfig} 
-        onSave={(newConfig) => {
-          setEventConfig(newConfig);
-          setAppState(AppState.START);
-        }} 
+        onSave={handleSaveConfig} 
       />
     );
   }
@@ -195,16 +211,13 @@ export default function App() {
           <div className="w-full md:w-[400px] bg-slate-900 border-l border-slate-800 p-8 flex flex-col justify-center gap-6 shadow-2xl z-20">
              <div className="text-center mb-4">
                 <h3 className="text-3xl font-bold text-white mb-2">Ficou incrível!</h3>
-                <p className="text-slate-400">Escaneie ou salve a foto abaixo</p>
-             </div>
-             <div className="bg-white p-4 rounded-2xl shadow-inner mx-auto w-48 h-48 flex items-center justify-center">
-                <div className="w-full h-full bg-slate-900" style={{backgroundImage: 'radial-gradient(#000 3px, transparent 3px)', backgroundSize: '18px 18px'}}></div>
+                <p className="text-slate-400">Salve sua lembrança abaixo</p>
              </div>
              <div className="space-y-3 mt-8">
-                <a href={finalImage} download={getDownloadFilename()} className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-lg">
+                <a href={finalImage} download={getDownloadFilename()} className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-xl font-bold text-lg transition-all active:scale-95">
                   <Download className="w-6 h-6" /> Salvar Foto
                 </a>
-                <button onClick={handleStartSession} className="w-full bg-slate-800 hover:bg-slate-700 text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3">
+                <button onClick={handleStartSession} className="w-full bg-slate-800 hover:bg-slate-700 text-white py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all active:scale-95">
                     <RefreshCw className="w-5 h-5" /> Tirar Outra
                 </button>
              </div>

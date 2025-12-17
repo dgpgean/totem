@@ -1,5 +1,6 @@
+
 import React, { useEffect, useRef, useState } from 'react';
-import { Camera, RefreshCw, Check, X } from 'lucide-react';
+import { Camera, RefreshCw, Check, X, AlertCircle } from 'lucide-react';
 
 interface CameraViewProps {
   deviceId: string;
@@ -20,13 +21,11 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
 
     const startCamera = async () => {
       try {
-        const constraints = {
-          video: {
-            deviceId: deviceId ? { exact: deviceId } : undefined,
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-            facingMode: 'user'
-          }
+        // No mobile, se passamos deviceId, não devemos passar facingMode 'user' obrigatoriamente
+        const constraints: MediaStreamConstraints = {
+          video: deviceId 
+            ? { deviceId: { exact: deviceId }, width: { ideal: 1920 }, height: { ideal: 1080 } }
+            : { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } }
         };
         
         stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -34,9 +33,16 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
           videoRef.current.srcObject = stream;
         }
         setStreamError('');
-      } catch (err) {
+      } catch (err: any) {
         console.error("Camera Error:", err);
-        setStreamError('Erro ao acessar a câmera. Verifique as permissões.');
+        // Tentar fallback se falhar com restrições exatas
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: true });
+          if (videoRef.current) videoRef.current.srcObject = stream;
+          setStreamError('');
+        } catch (retryErr) {
+          setStreamError('Erro ao acessar a câmera. Verifique as permissões de vídeo no navegador.');
+        }
       }
     };
 
@@ -72,7 +78,6 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
   const takeSnap = () => {
     if (!videoRef.current) return;
 
-    // Flash effect
     setFlash(true);
     setTimeout(() => setFlash(false), 200);
 
@@ -82,7 +87,7 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
     const ctx = canvas.getContext('2d');
     
     if (ctx) {
-      // Mirror the image like a mirror
+      // Espelhar apenas se for a câmera frontal (estimado)
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
       
@@ -104,12 +109,11 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
 
   return (
     <div className="relative w-full h-full bg-black overflow-hidden flex flex-col items-center justify-center rounded-2xl shadow-2xl">
-      {/* Video Feed or Preview */}
       {previewUrl ? (
         <div className="relative w-full h-full animate-in fade-in zoom-in-95 duration-300">
            <img src={previewUrl} className="w-full h-full object-cover" alt="Captured" />
            <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-12 backdrop-blur-sm">
-              <h2 className="text-4xl md:text-6xl font-black text-white drop-shadow-lg">Gostou da foto?</h2>
+              <h2 className="text-4xl md:text-6xl font-black text-white drop-shadow-lg">Ficou boa?</h2>
               
               <div className="flex gap-8 w-full max-w-2xl px-6">
                  <button 
@@ -125,7 +129,7 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
                    className="flex-1 bg-green-600 hover:bg-green-500 text-white py-8 rounded-3xl font-black text-3xl flex flex-col items-center gap-4 transition-all active:scale-95 shadow-2xl"
                  >
                    <Check className="w-16 h-16" />
-                   GOSTEI!
+                   OK!
                  </button>
               </div>
            </div>
@@ -133,9 +137,10 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
       ) : (
         <>
           {streamError ? (
-            <div className="text-white p-4 text-center">
-                <p className="text-red-400 mb-2">{streamError}</p>
-                <p className="text-sm text-gray-400">Tente selecionar outra câmera nas configurações.</p>
+            <div className="text-white p-8 text-center flex flex-col items-center gap-4">
+                <AlertCircle className="w-20 h-20 text-red-500" />
+                <p className="text-2xl font-bold">{streamError}</p>
+                <button onClick={() => window.location.reload()} className="mt-4 px-6 py-3 bg-white text-black rounded-full font-bold">Tentar Novamente</button>
             </div>
           ) : (
             <video 
@@ -147,7 +152,6 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
             />
           )}
 
-          {/* Countdown Overlay */}
           {countdown !== null && countdown > 0 && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-20">
               <span className="text-9xl font-black text-white animate-ping">
@@ -156,8 +160,7 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
             </div>
           )}
 
-          {/* Trigger Button */}
-          {countdown === null && (
+          {countdown === null && !streamError && (
             <div className="absolute bottom-10 z-20 flex flex-col items-center">
                 <button 
                     onClick={capturePhoto}
@@ -166,21 +169,19 @@ export const CameraView: React.FC<CameraViewProps> = ({ deviceId, onPhotoTaken, 
                     <Camera className="w-12 h-12 text-white group-hover:animate-bounce" />
                 </button>
                 <p className="text-white text-center mt-6 font-black drop-shadow-md text-3xl uppercase tracking-widest">
-                    Toque para Capturar
+                    SORRIA!
                 </p>
             </div>
           )}
         </>
       )}
 
-      {/* Overlays (Status) */}
       {!previewUrl && (
         <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/50 px-8 py-3 rounded-full text-white font-black text-2xl backdrop-blur-md border border-white/20">
           FOTO {countTaken + 1} DE {countNeeded}
         </div>
       )}
 
-      {/* Flash Overlay */}
       {flash && (
         <div className="absolute inset-0 bg-white z-50 animate-pulse" />
       )}
