@@ -3,10 +3,10 @@
   "version": 2,
   "public": true,
   "cleanUrls": true,
-  "outputDirectory": ".",
+  "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!assets/|manifest.json|sw.js|favicon.ico).*)",
       "destination": "/index.html"
     }
   ],
