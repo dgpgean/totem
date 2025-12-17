@@ -1,0 +1,7 @@
+{
+  "name": "TotemGenius",
+  "description": "Professional Photo Booth software with AI background generation and multi-layout support.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
