@@ -7,10 +7,12 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    target: 'esnext'
+    rollupOptions: {
+      input: {
+        main: './index.html',
+      },
+    },
   },
-  publicDir: '.', // Permite que manifest.json e sw.js sejam encontrados na raiz
-  server: {
-    port: 3000
-  }
+  // Não use '.' aqui, pois ele tentará servir o index.tsx como um arquivo estático
+  // Se houver uma pasta 'public', o Vite a usará automaticamente.
 });
