@@ -1,12 +1,15 @@
 
 {
   "version": 2,
-  "public": true,
+  "framework": "vite",
   "cleanUrls": true,
-  "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/((?!assets/|manifest.json|sw.js|favicon.ico).*)",
+      "source": "/(manifest.json|sw.js|favicon.ico)",
+      "destination": "/$1"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
@@ -21,15 +24,6 @@
         {
           "key": "Service-Worker-Allowed",
           "value": "/"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Permissions-Policy",
-          "value": "camera=(self)"
         }
       ]
     }

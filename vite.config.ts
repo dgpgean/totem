@@ -7,12 +7,10 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    rollupOptions: {
-      input: {
-        main: './index.html',
-      },
-    },
+    target: 'esnext'
   },
-  // Faz com que o Vite procure arquivos estáticos (como manifest.json) na raiz do projeto
-  publicDir: '.', 
+  publicDir: '.', // Permite que manifest.json e sw.js sejam encontrados na raiz
+  server: {
+    port: 3000
+  }
 });
