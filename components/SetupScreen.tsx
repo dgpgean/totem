@@ -32,21 +32,21 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
   }, []);
 
   useEffect(() => {
-      if (activeTab === 'gallery') {
-          loadGallery();
-      }
+    if (activeTab === 'gallery') {
+      loadGallery();
+    }
   }, [activeTab, localConfig.eventName]);
 
   const loadGallery = async () => {
-      const photos = await getPhotosByEvent(localConfig.eventName);
-      setEventPhotos(photos.reverse());
+    const photos = await getPhotosByEvent(localConfig.eventName);
+    setEventPhotos(photos.reverse());
   };
 
   const handleDeleteGallery = async () => {
-      if (confirm(`Tem certeza que deseja apagar todas as fotos do evento "${localConfig.eventName}"?`)) {
-          await deleteEventGallery(localConfig.eventName);
-          loadGallery();
-      }
+    if (confirm(`Tem certeza que deseja apagar todas as fotos do evento "${localConfig.eventName}"?`)) {
+      await deleteEventGallery(localConfig.eventName);
+      loadGallery();
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'backgroundUrl' | 'instagramProfileImage') => {
@@ -86,7 +86,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
               </div>
               <div>
                   <div className="flex items-center gap-3">
-                      <h1 className="text-3xl font-black tracking-tight text-white">Painel de Controle</h1>
+                      <h1 className="text-3xl font-black tracking-tight text-white">Configuração Totem</h1>
                       <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${isOnline ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                           {isOnline ? <><Wifi className="w-3 h-3"/> Online</> : <><WifiOff className="w-3 h-3"/> Offline</>}
                       </span>
@@ -96,13 +96,13 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                         onClick={() => setActiveTab('config')}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'config' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
                       >
-                        <LayoutGrid className="w-4 h-4" /> Configuração
+                        <LayoutGrid className="w-4 h-4" /> Ajustes
                       </button>
                       <button 
                         onClick={() => setActiveTab('gallery')}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === 'gallery' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
                       >
-                        <FolderHeart className="w-4 h-4" /> Galeria do Evento
+                        <FolderHeart className="w-4 h-4" /> Fotos Salvas
                       </button>
                   </div>
               </div>
@@ -112,7 +112,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
               className="bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-3 shadow-xl transition-transform hover:scale-105"
           >
               <Save className="w-6 h-6" />
-              Salvar e Iniciar Totem
+              Iniciar Totem
           </button>
       </header>
 
@@ -127,7 +127,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                 <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl">
                     <h2 className="text-xl font-bold mb-6 text-indigo-400 flex items-center gap-2">
                         <span className="w-2 h-8 bg-indigo-500 rounded-full"></span>
-                        1. Escolha o Layout
+                        1. Selecione o Layout
                     </h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {Object.values(LAYOUTS).map(layout => (
@@ -147,20 +147,20 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                 <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl">
                     <h2 className="text-xl font-bold mb-6 text-indigo-400 flex items-center gap-2">
                         <span className="w-2 h-8 bg-indigo-500 rounded-full"></span>
-                        2. Detalhes do Evento
+                        2. Dados do Evento
                     </h2>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-2">Nome do Evento</label>
+                            <label className="block text-sm font-medium text-slate-400 mb-2">Nome do Evento (Título Principal)</label>
                             <input type="text" value={localConfig.eventName} onChange={e => setLocalConfig({...localConfig, eventName: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-2">Local</label>
+                                <label className="block text-sm font-medium text-slate-400 mb-2">Localização</label>
                                 <input type="text" value={localConfig.eventLocation || ''} onChange={e => setLocalConfig({...localConfig, eventLocation: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-2">Data</label>
+                                <label className="block text-sm font-medium text-slate-400 mb-2">Data do Evento</label>
                                 <input type="text" value={localConfig.eventDate} onChange={e => setLocalConfig({...localConfig, eventDate: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                             </div>
                         </div>
@@ -171,11 +171,11 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                 {isInstagram && (
                     <section className="bg-gradient-to-br from-pink-900/30 to-purple-900/30 rounded-3xl p-8 border border-pink-500/30 shadow-xl">
                         <h2 className="text-xl font-bold mb-6 text-pink-400 flex items-center gap-2">
-                            <Instagram className="w-6 h-6" /> 3. Configuração Instagram
+                            <Instagram className="w-6 h-6" /> 3. Layout Instagram
                         </h2>
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-white/80 mb-2">Título do Cabeçalho</label>
+                                <label className="block text-sm font-medium text-white/80 mb-2">Frase do Topo</label>
                                 <input type="text" value={localConfig.instagramHeader || ''} onChange={e => setLocalConfig({...localConfig, instagramHeader: e.target.value})} className="w-full bg-black/30 border border-white/10 rounded-xl p-4 text-lg text-white" />
                             </div>
                             <div className="flex items-center gap-4 bg-black/20 p-4 rounded-xl border border-white/5">
@@ -183,15 +183,18 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                                     {localConfig.instagramProfileImage ? <img src={localConfig.instagramProfileImage} className="w-full h-full object-cover" /> : <Upload className="w-6 h-6 m-auto mt-8 text-slate-500" />}
                                     <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'instagramProfileImage')} className="absolute inset-0 opacity-0 cursor-pointer" />
                                 </div>
-                                <h3 className="font-bold text-white text-lg">Foto de Perfil</h3>
+                                <h3 className="font-bold text-white text-lg">Avatar/Logo</h3>
                             </div>
-                            <div className="grid grid-cols-3 gap-4">
-                                {[0, 1, 2].map(idx => (
-                                    <div key={idx} className="relative aspect-square rounded-xl bg-slate-800 border-2 border-dashed border-slate-600 overflow-hidden hover:border-pink-500 transition-colors">
-                                        {localConfig.instagramFooterImages?.[idx] ? <img src={localConfig.instagramFooterImages[idx]} className="w-full h-full object-cover" /> : <Upload className="w-8 h-8 m-auto mt-1/3 text-slate-500" />}
-                                        <input type="file" accept="image/*" onChange={(e) => handleFooterUpload(e, idx)} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                    </div>
-                                ))}
+                            <div>
+                                <label className="block text-sm font-medium text-white/80 mb-4 text-center">Imagens do Feed (3 fotos fixas)</label>
+                                <div className="grid grid-cols-3 gap-4">
+                                    {[0, 1, 2].map(idx => (
+                                        <div key={idx} className="relative aspect-square rounded-xl bg-slate-800 border-2 border-dashed border-slate-600 overflow-hidden hover:border-pink-500 transition-colors">
+                                            {localConfig.instagramFooterImages?.[idx] ? <img src={localConfig.instagramFooterImages[idx]} className="w-full h-full object-cover" /> : <Upload className="w-8 h-8 m-auto mt-1/3 text-slate-500" />}
+                                            <input type="file" accept="image/*" onChange={(e) => handleFooterUpload(e, idx)} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -199,9 +202,9 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
 
                 {/* 4. Hardware */}
                 <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl">
-                    <h2 className="text-xl font-bold mb-6 text-indigo-400">4. Hardware</h2>
+                    <h2 className="text-xl font-bold mb-6 text-indigo-400">4. Dispositivo de Captura</h2>
                     <select value={localConfig.deviceId} onChange={e => setLocalConfig({...localConfig, deviceId: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg">
-                        <option value="">Câmera Padrão</option>
+                        <option value="">Câmera Padrão (ou DSLR via Virtual Cam)</option>
                         {devices.map(device => <option key={device.deviceId} value={device.deviceId}>{device.label || `Câmera ${device.deviceId.slice(0,4)}`}</option>)}
                     </select>
                 </section>
@@ -210,19 +213,20 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                 <div className="lg:col-span-5 flex flex-col h-full">
                 {!isInstagram && (
                     <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl flex-1 flex flex-col sticky top-6">
-                        <h2 className="text-xl font-bold mb-6 text-indigo-400">Fundo do Totem</h2>
+                        <h2 className="text-xl font-bold mb-6 text-indigo-400">Personalizar Fundo</h2>
+                        <p className="text-slate-400 text-sm mb-6">Suba a imagem que aparecerá no fundo da tela de início e nas impressões.</p>
                         <div className="flex-1 min-h-[400px] relative group w-full bg-slate-950 border-2 border-dashed border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden hover:border-indigo-500 transition-colors">
                             {localConfig.backgroundUrl ? (
                                 <div className="relative w-full h-full">
                                     <img src={localConfig.backgroundUrl} className="w-full h-full object-contain" />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                        <p className="text-white font-bold">Alterar Imagem</p>
+                                        <p className="text-white font-bold">Trocar Fundo</p>
                                     </div>
                                 </div>
                             ) : (
                                 <div className="text-center text-slate-600">
                                     <ImageIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                                    <p>Subir Background</p>
+                                    <p>Clique ou arraste o fundo</p>
                                 </div>
                             )}
                             <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'backgroundUrl')} className="absolute inset-0 opacity-0 cursor-pointer" />
@@ -237,13 +241,13 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-4xl font-black text-white">Galeria: {localConfig.eventName}</h2>
-                        <p className="text-slate-400 mt-2">{eventPhotos.length} fotos capturadas neste evento.</p>
+                        <p className="text-slate-400 mt-2">{eventPhotos.length} fotos salvas neste totem.</p>
                     </div>
                     <button 
                         onClick={handleDeleteGallery}
                         className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all border border-red-500/50"
                     >
-                        <Trash2 className="w-5 h-5" /> Limpar Galeria do Evento
+                        <Trash2 className="w-5 h-5" /> Apagar Tudo
                     </button>
                 </div>
 
@@ -251,7 +255,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                     <div className="bg-slate-900 rounded-3xl p-20 text-center border border-slate-800 border-dashed">
                         <ImageIcon className="w-20 h-20 mx-auto text-slate-700 mb-6" />
                         <h3 className="text-2xl font-bold text-slate-500">Nenhuma foto ainda</h3>
-                        <p className="text-slate-600 mt-2">Inicie o totem para começar a capturar memórias!</p>
+                        <p className="text-slate-600 mt-2">Inicie o totem e capture as primeiras memórias!</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -261,7 +265,7 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-4">
                                     <a 
                                         href={photo.dataUrl} 
-                                        download={`foto_${localConfig.eventName.replace(/ /g,'_')}_${i+1}.jpg`}
+                                        download={`totem_${localConfig.eventName.replace(/ /g,'_')}_${i+1}.jpg`}
                                         className="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-full shadow-xl"
                                     >
                                         <Download className="w-6 h-6" />

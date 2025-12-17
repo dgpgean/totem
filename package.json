@@ -4,11 +4,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "serve ."
-  },
-  "dependencies": {
-    "lucide-react": "^0.460.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "build": "mkdir -p .vercel/output/static && cp -r . .vercel/output/static 2>/dev/null || true"
   }
 }
