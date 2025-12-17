@@ -1,6 +1,6 @@
 {
   "name": "TotemGenius",
-  "description": "Professional Photo Booth software with AI background generation and multi-layout support.",
+  "description": "Software profissional para totem de fotos com suporte a múltiplos layouts e personalização de fundo.",
   "requestFramePermissions": [
     "camera"
   ]
