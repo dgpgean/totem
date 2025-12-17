@@ -1,9 +1,8 @@
 
 import React, { useEffect, useState } from 'react';
-import { Settings, Image as ImageIcon, Camera, Wand2, Loader2, Save, Upload, Instagram, MapPin, Calendar, Type, Wifi, WifiOff, LayoutGrid, FolderHeart, Trash2, Download } from 'lucide-react';
+import { Settings, Image as ImageIcon, Camera, Save, Upload, Instagram, Wifi, WifiOff, LayoutGrid, FolderHeart, Trash2, Download } from 'lucide-react';
 import { EventConfig, LayoutId } from '../types';
 import { LAYOUTS } from '../constants';
-import { generateEventBackground } from '../services/geminiService';
 import { getPhotosByEvent, deleteEventGallery } from '../services/galleryService';
 
 interface SetupScreenProps {
@@ -14,8 +13,6 @@ interface SetupScreenProps {
 export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
   const [localConfig, setLocalConfig] = useState<EventConfig>(config);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [activeTab, setActiveTab] = useState<'config' | 'gallery'>('config');
   const [eventPhotos, setEventPhotos] = useState<any[]>([]);
@@ -50,19 +47,6 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
           await deleteEventGallery(localConfig.eventName);
           loadGallery();
       }
-  };
-
-  const handleGenerateBg = async () => {
-    if (!aiPrompt || !isOnline) return;
-    setIsGenerating(true);
-    try {
-      const bgUrl = await generateEventBackground(aiPrompt);
-      setLocalConfig(prev => ({ ...prev, backgroundUrl: bgUrl }));
-    } catch (e) {
-      alert('Falha ao gerar fundo. Verifique a conexão.');
-    } finally {
-      setIsGenerating(false);
-    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'backgroundUrl' | 'instagramProfileImage') => {
@@ -226,20 +210,24 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                 <div className="lg:col-span-5 flex flex-col h-full">
                 {!isInstagram && (
                     <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl flex-1 flex flex-col sticky top-6">
-                        <h2 className="text-xl font-bold mb-6 text-indigo-400">Background Geral</h2>
-                        <div className="bg-slate-950 rounded-2xl p-4 border border-slate-800 mb-6">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Wand2 className={`w-4 h-4 ${isOnline ? 'text-purple-400' : 'text-slate-500'}`} />
-                                <span className="text-xs font-bold text-purple-200 uppercase tracking-wider">IA Gemini {!isOnline && '(Requer Internet)'}</span>
-                            </div>
-                            <textarea disabled={!isOnline} value={aiPrompt} onChange={e => setAiPrompt(e.target.value)} placeholder={isOnline ? "Descreva o tema..." : "IA indisponível no modo offline."} className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-sm h-20 outline-none disabled:opacity-50" />
-                            <button disabled={isGenerating || !aiPrompt || !isOnline} onClick={handleGenerateBg} className="w-full mt-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-colors">
-                                {isGenerating ? <Loader2 className="animate-spin w-4 h-4" /> : 'Gerar Fundo com IA'}
-                            </button>
-                        </div>
-                        <div className="flex-1 min-h-[400px] relative group w-full bg-slate-950 border-2 border-dashed border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden hover:border-indigo-500">
-                            {localConfig.backgroundUrl ? <img src={localConfig.backgroundUrl} className="w-full h-full object-contain" /> : <div className="text-center text-slate-600"><ImageIcon className="w-12 h-12 mx-auto mb-4 opacity-50" /><p>Imagem de Fundo</p></div>}
-                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'backgroundUrl')} className="absolute inset-0 opacity-0 cursor-pointer" />
+                        <h2 className="text-xl font-bold mb-6 text-indigo-400">Imagem de Fundo</h2>
+                        <p className="text-slate-400 text-sm mb-6">Esta imagem aparecerá na tela inicial e em layouts que suportam background.</p>
+                        
+                        <div className="flex-1 min-h-[400px] relative group w-full bg-slate-950 border-2 border-dashed border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden hover:border-indigo-500 transition-colors">
+                            {localConfig.backgroundUrl ? (
+                                <div className="relative w-full h-full">
+                                    <img src={localConfig.backgroundUrl} className="w-full h-full object-contain" />
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                        <p className="text-white font-bold">Clique para alterar</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-center text-slate-600">
+                                    <ImageIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                    <p>Selecionar Fundo</p>
+                                </div>
+                            )}
+                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'backgroundUrl')} className="absolute inset-0 opacity-0 cursor-pointer" title="Selecionar imagem de fundo" />
                         </div>
                     </section>
                 )}
