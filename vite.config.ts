@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  // Define que a raiz pode conter arquivos estáticos (como manifest.json e sw.js)
+  // mas o Vite cuidará para não duplicar o index.html ou arquivos de código.
+  publicDir: false, 
   build: {
     outDir: 'dist',
     emptyOutDir: true,
@@ -11,8 +14,8 @@ export default defineConfig({
       input: {
         main: './index.html',
       },
+      // Copia manualmente arquivos necessários que não são importados no código
+      external: []
     },
-  },
-  // Não use '.' aqui, pois ele tentará servir o index.tsx como um arquivo estático
-  // Se houver uma pasta 'public', o Vite a usará automaticamente.
+  }
 });
