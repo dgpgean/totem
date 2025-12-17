@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Settings, Image as ImageIcon, Camera, Save, Upload, Instagram, Wifi, WifiOff, LayoutGrid, FolderHeart, Trash2, Download } from 'lucide-react';
+import { Settings, Image as ImageIcon, Save, Upload, Instagram, Wifi, WifiOff, LayoutGrid, FolderHeart, Trash2, Download } from 'lucide-react';
 import { EventConfig, LayoutId } from '../types';
 import { LAYOUTS } from '../constants';
 import { getPhotosByEvent, deleteEventGallery } from '../services/galleryService';
@@ -147,11 +147,11 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                 <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl">
                     <h2 className="text-xl font-bold mb-6 text-indigo-400 flex items-center gap-2">
                         <span className="w-2 h-8 bg-indigo-500 rounded-full"></span>
-                        2. Detalhes do Evento (Pasta)
+                        2. Detalhes do Evento
                     </h2>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-2">Nome do Evento (Usado para salvar as fotos)</label>
+                            <label className="block text-sm font-medium text-slate-400 mb-2">Nome do Evento</label>
                             <input type="text" value={localConfig.eventName} onChange={e => setLocalConfig({...localConfig, eventName: e.target.value})} className="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -210,24 +210,22 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                 <div className="lg:col-span-5 flex flex-col h-full">
                 {!isInstagram && (
                     <section className="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl flex-1 flex flex-col sticky top-6">
-                        <h2 className="text-xl font-bold mb-6 text-indigo-400">Imagem de Fundo</h2>
-                        <p className="text-slate-400 text-sm mb-6">Esta imagem aparecerá na tela inicial e em layouts que suportam background.</p>
-                        
+                        <h2 className="text-xl font-bold mb-6 text-indigo-400">Fundo do Totem</h2>
                         <div className="flex-1 min-h-[400px] relative group w-full bg-slate-950 border-2 border-dashed border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden hover:border-indigo-500 transition-colors">
                             {localConfig.backgroundUrl ? (
                                 <div className="relative w-full h-full">
                                     <img src={localConfig.backgroundUrl} className="w-full h-full object-contain" />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                        <p className="text-white font-bold">Clique para alterar</p>
+                                        <p className="text-white font-bold">Alterar Imagem</p>
                                     </div>
                                 </div>
                             ) : (
                                 <div className="text-center text-slate-600">
                                     <ImageIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                                    <p>Selecionar Fundo</p>
+                                    <p>Subir Background</p>
                                 </div>
                             )}
-                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'backgroundUrl')} className="absolute inset-0 opacity-0 cursor-pointer" title="Selecionar imagem de fundo" />
+                            <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'backgroundUrl')} className="absolute inset-0 opacity-0 cursor-pointer" />
                         </div>
                     </section>
                 )}
@@ -268,7 +266,6 @@ export const SetupScreen: React.FC<SetupScreenProps> = ({ config, onSave }) => {
                                     >
                                         <Download className="w-6 h-6" />
                                     </a>
-                                    <span className="text-xs text-white/70 font-mono">{new Date(photo.timestamp).toLocaleTimeString()}</span>
                                 </div>
                             </div>
                         ))}
