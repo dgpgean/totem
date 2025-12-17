@@ -13,6 +13,6 @@ export default defineConfig({
       },
     },
   },
-  // Define que arquivos na raiz (como manifest.json e sw.js) devem ser tratados como estáticos
-  publicDir: false, 
+  // Faz com que o Vite procure arquivos estáticos (como manifest.json) na raiz do projeto
+  publicDir: '.', 
 });
